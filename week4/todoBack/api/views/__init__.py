@@ -1,0 +1,1 @@
+from .FBV import task_list, task_list_detail
