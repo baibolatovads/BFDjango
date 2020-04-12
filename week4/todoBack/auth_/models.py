@@ -12,7 +12,7 @@ class MyUserManager(UserManager):
 
 
 class MyUser(AbstractUser):
-    is_editor = models.BooleanField(False)
+    is_editor = models.BooleanField(False, default=False)
     objects = MyUserManager()
 
 

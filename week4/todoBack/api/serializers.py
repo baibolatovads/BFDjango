@@ -9,7 +9,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'email')
 
 
-class TaskSerializer(serializers.Serializer):
+"""class TaskSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     name = serializers.CharField(required=True)
 
@@ -22,6 +22,12 @@ class TaskSerializer(serializers.Serializer):
         instance.name = validated_data.get('name', instance.name)
         instance.is_done = validated_data.get('is_done', instance.is_done)
         instance.save()
-        return instance
+        return instance"""
+
+
+class TaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Task
+        fields = ('id', 'name', 'is_done')
 
 
