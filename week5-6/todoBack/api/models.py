@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from auth_.models import MyUser
+from utils.validators import validate_file_size, validate_extension
 # Create your models here.
 
 
@@ -36,6 +37,9 @@ class TaskList(models.Model):
     topic = models.CharField(max_length=255)
     task = models.ForeignKey(Task, on_delete=models.CASCADE, default=None, blank=True)
     created_by = models.ForeignKey(MyUser, on_delete=models.CASCADE, default=1)
+    schedule = models.ImageField(upload_to='taskList_photos', validators=[validate_file_size,
+                                                                          validate_extension],
+                                                                          null=True, blank=True)
 
     class Meta:
         verbose_name = 'Task List'

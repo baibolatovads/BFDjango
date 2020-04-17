@@ -11,7 +11,9 @@ from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework.response import Response
 from rest_framework.decorators import action
+import logging
 
+logger = logging.getLogger(__name__)
 
 class TaskViewSet(mixins.CreateModelMixin,
                         mixins.ListModelMixin,
@@ -29,6 +31,10 @@ class TaskViewSet(mixins.CreateModelMixin,
 
     serializer_class = TaskModelSerializer
 
+    def perform_create(self, serializer):
+        serializer.save()
+        logger.info('Task is created, ID: {}'.format(serializer.instance))
+
 
 class TaskListViewSet(mixins.CreateModelMixin,
                       mixins.ListModelMixin,
@@ -43,3 +49,7 @@ class TaskListViewSet(mixins.CreateModelMixin,
         if self.action == 'retrieve':
             return TaskListFullSerializer
         return TaskListShortSerializer
+
+    def perform_create(self, serializer):
+        serializer.save()
+        logger.info('Task List is created: {}'.format(serializer.instance))
