@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from .views import task_list, task_list_detail, TaskListAPIView, TaskListViewSet
+from .views import task_list, task_list_detail, TaskListAPIView, TaskViewSet, TaskListViewSet
 from rest_framework.routers import DefaultRouter
 
 
@@ -9,5 +9,6 @@ from rest_framework.routers import DefaultRouter
 ]"""
 
 router = DefaultRouter()
-router.register(r'tasks', TaskListViewSet)
+router.register(r'tasks', TaskViewSet, basename='tasks')
+router.register(r'task_list', TaskListViewSet, basename='task_list')
 urlpatterns = router.urls

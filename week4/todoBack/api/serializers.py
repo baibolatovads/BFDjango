@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from models import Task
+from models import Task, TaskList
 from auth_.models import MyUser
 
 
@@ -9,7 +9,21 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'email')
 
 
-"""class TaskSerializer(serializers.Serializer):
+class TaskListSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+    topic = serializers.CharField(required=True)
+
+    class Meta:
+        model = TaskList
+        fields = '__all__'
+
+    def validate_name(self, value):
+        if any(x in value for x in ['%', '&', '$', '^']):
+            raise serializers.ValidationError('invalid character in name field')
+        return value
+
+
+class TaskSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     name = serializers.CharField(required=True)
 
@@ -22,12 +36,26 @@ class UserSerializer(serializers.ModelSerializer):
         instance.name = validated_data.get('name', instance.name)
         instance.is_done = validated_data.get('is_done', instance.is_done)
         instance.save()
-        return instance"""
+        return instance
 
 
-class TaskSerializer(serializers.ModelSerializer):
+class TaskModelSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+    name = serializers.CharField(required=True)
+
     class Meta:
         model = Task
-        fields = ('id', 'name', 'is_done')
+        fields = '__all__'
+
+    def validate_name(self, value):
+        if any(x in value for x in ['%', '&', '$', '^']):
+            raise serializers.ValidationError('invalid character in name field')
+        return value
+
+)
+
+
+
+
 
 
