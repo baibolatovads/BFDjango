@@ -33,6 +33,34 @@ class Task(models.Model):
         return '{}: {}'.format(self.id, self.name)
 
 
+class Publisher(models.Model):
+    MALE = 1
+    FEMALE = 2
+    GENDER = (
+        (MALE, 'male'),
+        (FEMALE, 'female'),
+    )
+    name = models.CharField(max_length=300, unique=True)
+    city = models.CharField(max_length=300)
+    gender = models.PositiveSmallIntegerField(choices=GENDER, default=MALE)
+
+    objects = models.Manager()
+
+    class Meta:
+        verbose_name = 'Publisher'
+        verbose_name_plural = 'Publishers'
+
+    def __str__(self):
+        return self.name
+
+
+class UserPublisher(models.Model):
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE,
+                             related_name='subscribed_publishers')
+    publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE,
+                                  related_name='subscribers')
+
+
 class TaskList(models.Model):
     topic = models.CharField(max_length=255)
     task = models.ForeignKey(Task, on_delete=models.CASCADE, default=None, blank=True)
@@ -40,6 +68,8 @@ class TaskList(models.Model):
     schedule = models.ImageField(upload_to='taskList_photos', validators=[validate_file_size,
                                                                           validate_extension],
                                                                           null=True, blank=True)
+    publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE, related_name='books',
+                                  default=None, null=True, blank=True)
 
     class Meta:
         verbose_name = 'Task List'
@@ -47,3 +77,5 @@ class TaskList(models.Model):
 
     def __str__(self):
         return '{}: {}'.format(self.id, self.topic)
+
+

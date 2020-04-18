@@ -13,11 +13,13 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('api')
 
 class TaskViewSet(mixins.CreateModelMixin,
                         mixins.ListModelMixin,
                        mixins.RetrieveModelMixin,
+                        mixins.UpdateModelMixin,
+                        mixins.DestroyModelMixin,
                        viewsets.GenericViewSet):
 
     def get_queryset(self):
@@ -33,8 +35,24 @@ class TaskViewSet(mixins.CreateModelMixin,
 
     def perform_create(self, serializer):
         serializer.save()
-        logger.info('Task is created, ID: {}'.format(serializer.instance))
-
+        if self.action == 'create':
+            logger.debug('Task is created, ID: {}'.format(serializer.instance))
+            logger.info('Task is created, ID: {}'.format(serializer.instance))
+            logger.warning('Task is created, ID: {}'.format(serializer.instance))
+            logger.error('Task is created, ID: {}'.format(serializer.instance))
+            logger.critical('Task is created, ID: {}'.format(serializer.instance))
+        if self.action == 'update':
+            logger.debug('Task is updated, ID: {}'.format(serializer.instance))
+            logger.info('Task is updated, ID: {}'.format(serializer.instance))
+            logger.warning('Task is updated, ID: {}'.format(serializer.instance))
+            logger.error('Task is updated, ID: {}'.format(serializer.instance))
+            logger.critical('Task is updated, ID: {}'.format(serializer.instance))
+        if self.action == 'destroy':
+            logger.debug('Task is deleted, ID: {}'.format(serializer.instance))
+            logger.info('Task is deleted, ID: {}'.format(serializer.instance))
+            logger.warning('Task is deleted, ID: {}'.format(serializer.instance))
+            logger.error('Task is deleted, ID: {}'.format(serializer.instance))
+            logger.critical('Task is deleted, ID: {}'.format(serializer.instance))
 
 class TaskListViewSet(mixins.CreateModelMixin,
                       mixins.ListModelMixin,
@@ -52,4 +70,11 @@ class TaskListViewSet(mixins.CreateModelMixin,
 
     def perform_create(self, serializer):
         serializer.save()
+        logger.debug('Task List is created: {}'.format(serializer.instance))
         logger.info('Task List is created: {}'.format(serializer.instance))
+        logger.warning('Task List is created: {}'.format(serializer.instance))
+        logger.error('Task List is created: {}'.format(serializer.instance))
+        logger.critical('Task List is created: {}'.format(serializer.instance))
+
+
+

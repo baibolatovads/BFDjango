@@ -189,14 +189,20 @@ LOGGING = {
             'filename': 'test.log',
             'formatter': 'verbose'
         },
+        'console_handler': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        }
     },
     'loggers': {
         'api': {
-            'handlers': ['file_handler'],
+            'handlers': ['file_handler', 'console_handler'],
             'level': 'DEBUG',
         },
     },
 }
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

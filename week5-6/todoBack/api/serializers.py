@@ -46,7 +46,7 @@ class TaskListShortSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TaskList
-        fields = ('id', 'topic', 'task_id', 'created_by', 'schedule')
+        fields = ('id', 'topic', 'task_id', 'created_by', 'schedule', 'publisher')
 
     def validate_name(self, value):
         if any(x in value for x in ['%', '&', '$', '^']):
