@@ -1,6 +1,8 @@
 from django.http import Http404
 from rest_framework import generics, mixins
 from rest_framework.permissions import IsAuthenticated
+from django.db.models import Avg, Max, Min, Sum, Count
+from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
 
 from api.models import Task, TaskList
 from api.serializers import *
@@ -11,6 +13,7 @@ from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
 import logging
 
 logger = logging.getLogger('api')
@@ -31,7 +34,12 @@ class TaskViewSet(mixins.CreateModelMixin,
         else:
             return Task.objects.all()
 
-    serializer_class = TaskModelSerializer
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return TaskShortSerializer
+        if self.action == 'retrieve':
+            return TaskFullSerializer
+        return TaskShortSerializer
 
     def perform_create(self, serializer):
         serializer.save()
@@ -46,6 +54,12 @@ class TaskViewSet(mixins.CreateModelMixin,
     def perform_destroy(self, instance):
         logger.warning('Task is deleted, ID: {}'.format(instance))
 
+    @action(methods=['GET'], detail=False)
+    def task_report(self, request):
+        data = [
+            TaskList.objects.values('id').annotate(Count('tasks'))
+        ]
+        return Response(data)
 
 
 class TaskListViewSet(mixins.CreateModelMixin,
@@ -53,14 +67,15 @@ class TaskListViewSet(mixins.CreateModelMixin,
                       mixins.RetrieveModelMixin,
                       mixins.UpdateModelMixin,
                       viewsets.GenericViewSet):
-    queryset = TaskList.objects.all()
 
-    def get_serializer_class(self):
+    queryset = TaskList.objects.annotate(tasks_count=Count('tasks'))
+    serializer_class = TaskListSerializer
+    parser_classes = (FormParser, MultiPartParser, JSONParser)
+
+    def get_queryset(self):
         if self.action == 'list':
-            return TaskListShortSerializer
-        if self.action == 'retrieve':
-            return TaskListFullSerializer
-        return TaskListShortSerializer
+            return TaskList.objects.prefetch_related('tasks')
+        return TaskList.objects.all()
 
     def perform_create(self, serializer):
         serializer.save()

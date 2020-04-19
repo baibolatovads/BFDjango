@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.contrib import admin
-from models import Task, TaskList, Publisher
+from api.models import Task, TaskList, Publisher
 
 # Register your models here.
 

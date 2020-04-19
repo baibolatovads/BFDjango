@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from models import Task, TaskList
+from api.models import Task, TaskList
 from auth_.models import MyUser
 
 
@@ -25,13 +25,14 @@ class TaskSerializer(serializers.Serializer):
         return instance
 
 
-class TaskModelSerializer(serializers.ModelSerializer):
+class TaskShortSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     name = serializers.CharField(required=True)
+    task_list_id = serializers.IntegerField(write_only=True)
 
     class Meta:
         model = Task
-        fields = ('id', 'name', 'is_done',)
+        fields = ('id', 'name', 'is_done', 'task_list_id',)
 
     def validate_name(self, value):
         if any(x in value for x in ['%', '&', '$', '^']):
@@ -39,14 +40,15 @@ class TaskModelSerializer(serializers.ModelSerializer):
         return value
 
 
-class TaskListShortSerializer(serializers.ModelSerializer):
+class TaskListSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     topic = serializers.CharField(required=True)
-    task_id = serializers.IntegerField(write_only=True)
+    tasks_count = serializers.IntegerField(default=0)
+    tasks = TaskShortSerializer(many=True, read_only=True)
 
     class Meta:
         model = TaskList
-        fields = ('id', 'topic', 'task_id', 'created_by', 'schedule', 'publisher')
+        fields = ('id', 'topic', 'created_by', 'schedule', 'publisher', 'tasks_count', 'tasks',)
 
     def validate_name(self, value):
         if any(x in value for x in ['%', '&', '$', '^']):
@@ -54,11 +56,18 @@ class TaskListShortSerializer(serializers.ModelSerializer):
         return value
 
 
-class TaskListFullSerializer(TaskListShortSerializer):
-    task = TaskModelSerializer(read_only=True)
+class TaskFullSerializer(TaskShortSerializer):
+    task_list = TaskListSerializer(read_only=True)
 
-    class Meta(TaskListShortSerializer.Meta):
-        fields = TaskListShortSerializer.Meta.fields + ('task', )
+    class Meta(TaskShortSerializer.Meta):
+        fields = TaskShortSerializer.Meta.fields + ('task_list', )
+
+
+
+
+
+
+
 
 
 

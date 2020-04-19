@@ -29,6 +29,8 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+INTERNAL_IPS = ['127.0.0.1']
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -40,9 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_jwt',
+    'debug_toolbar',
     'api',
     'auth_',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -53,7 +57,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
+
+
 
 ROOT_URLCONF = 'todoBack.urls'
 

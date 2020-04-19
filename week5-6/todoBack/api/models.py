@@ -17,22 +17,6 @@ class DoneTasks(models.Manager):
         return self.filter(is_done=True)
 
 
-class Task(models.Model):
-    name = models.CharField(max_length=255)
-    is_done = models.BooleanField(default=False)
-
-    objects = models.Manager()
-    not_done_tasks = NotDoneTasks()
-    done_tasks = DoneTasks()
-
-    class Meta:
-        verbose_name = 'Task'
-        verbose_name_plural = 'Tasks'
-
-    def __str__(self):
-        return '{}: {}'.format(self.id, self.name)
-
-
 class Publisher(models.Model):
     MALE = 1
     FEMALE = 2
@@ -63,12 +47,11 @@ class UserPublisher(models.Model):
 
 class TaskList(models.Model):
     topic = models.CharField(max_length=255)
-    task = models.ForeignKey(Task, on_delete=models.CASCADE, default=None, blank=True)
     created_by = models.ForeignKey(MyUser, on_delete=models.CASCADE, default=1)
     schedule = models.ImageField(upload_to='taskList_photos', validators=[validate_file_size,
                                                                           validate_extension],
                                                                           null=True, blank=True)
-    publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE, related_name='books',
+    publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE, related_name='tasks',
                                   default=None, null=True, blank=True)
 
     class Meta:
@@ -77,5 +60,28 @@ class TaskList(models.Model):
 
     def __str__(self):
         return '{}: {}'.format(self.id, self.topic)
+
+
+class Task(models.Model):
+    name = models.CharField(max_length=255)
+    is_done = models.BooleanField(default=False)
+    task_list = models.ForeignKey(TaskList, on_delete=models.CASCADE, default=None, null=True, blank=True, related_name='tasks')
+
+    objects = models.Manager()
+    not_done_tasks = NotDoneTasks()
+    done_tasks = DoneTasks()
+
+    class Meta:
+        verbose_name = 'Task'
+        verbose_name_plural = 'Tasks'
+
+    def __str__(self):
+        return '{}: {}'.format(self.id, self.name)
+
+
+
+
+
+
 
 
